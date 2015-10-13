@@ -1017,6 +1017,11 @@ void _glfwPlatformRestoreWindow(_GLFWwindow* window)
     ShowWindow(window->win32.handle, SW_RESTORE);
 }
 
+void _glfwPlatformMaximizeWindow(_GLFWwindow* window)
+{
+    ShowWindow(window->win32.handle, SW_MAXIMIZE);
+}
+
 void _glfwPlatformShowWindow(_GLFWwindow* window)
 {
     ShowWindow(window->win32.handle, SW_SHOW);
@@ -1048,6 +1053,11 @@ int _glfwPlatformWindowIconified(_GLFWwindow* window)
 int _glfwPlatformWindowVisible(_GLFWwindow* window)
 {
     return IsWindowVisible(window->win32.handle);
+}
+
+int _glfwPlatformWindowMaximized(_GLFWwindow* window)
+{
+    return IsZoomed(window->win32.handle);
 }
 
 void _glfwPlatformPollEvents(void)

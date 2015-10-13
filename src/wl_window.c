@@ -366,6 +366,12 @@ void _glfwPlatformRestoreWindow(_GLFWwindow* window)
     fprintf(stderr, "_glfwPlatformRestoreWindow not implemented yet\n");
 }
 
+void _glfwPlatformMaximizeWindow(_GLFWwindow* window)
+{
+    // TODO
+    fprintf(stderr, "_glfwPlatformMaximizeWindow not implemented yet\n");
+}
+
 void _glfwPlatformShowWindow(_GLFWwindow* window)
 {
     wl_shell_surface_set_toplevel(window->wl.shell_surface);
@@ -396,6 +402,12 @@ int _glfwPlatformWindowIconified(_GLFWwindow* window)
 }
 
 int _glfwPlatformWindowVisible(_GLFWwindow* window)
+{
+    // TODO
+    return GLFW_FALSE;
+}
+
+int _glfwPlatformWindowMaximized(_GLFWwindow* window)
 {
     // TODO
     return GLFW_FALSE;

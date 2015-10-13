@@ -17,6 +17,12 @@ GLFW now supports querying the localized name of printable keys with @ref
 glfwGetKeyName, either by key token or by scancode.
 
 
+@subsection news_32_maximize Window maxmimization supprot
+
+GLFW now supports window maximization with @ref glfwMaximizeWindow and the
+[GLFW_MAXIMIZED](@ref window_attribs_wnd) window hint and attribute.
+
+
 @section news_31 New features in 3.1
 
 These are the release highlights.  For a full list of changes see the

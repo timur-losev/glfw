@@ -64,6 +64,7 @@ used by the tests and examples and are not required to build the library.
 
 ## Changelog
 
+ - Added `glfwMaximizeWindow` for maximizing windows
  - Added `glfwSetWindowSizeLimits` and `glfwSetWindowAspectRatio` for setting
    absolute and relative window size limits
  - Added `glfwGetKeyName` for querying the layout-specific name of printable
