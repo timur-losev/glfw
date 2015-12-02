@@ -89,15 +89,23 @@ static GLFWbool parseVersionString(int* api, int* major, int* minor, int* rev)
 
 GLFWbool _glfwIsValidContextConfig(const _GLFWctxconfig* ctxconfig)
 {
-    if (ctxconfig->api != GLFW_NO_API &&
-        ctxconfig->api != GLFW_OPENGL_API &&
-        ctxconfig->api != GLFW_OPENGL_ES_API)
+    if (ctxconfig->context != GLFW_CONTEXT_ANY_API &&
+        ctxconfig->context != GLFW_CONTEXT_EGL_API &&
+        ctxconfig->context != GLFW_CONTEXT_NATIVE_API)
+    {
+        _glfwInputError(GLFW_INVALID_ENUM, "Invalid context API");
+        return GLFW_FALSE;
+    }
+
+    if (ctxconfig->client != GLFW_NO_API &&
+        ctxconfig->client != GLFW_OPENGL_API &&
+        ctxconfig->client != GLFW_OPENGL_ES_API)
     {
         _glfwInputError(GLFW_INVALID_ENUM, "Invalid client API");
         return GLFW_FALSE;
     }
 
-    if (ctxconfig->api == GLFW_OPENGL_API)
+    if (ctxconfig->client == GLFW_OPENGL_API)
     {
         if ((ctxconfig->major < 1 || ctxconfig->minor < 0) ||
             (ctxconfig->major == 1 && ctxconfig->minor > 5) ||
@@ -146,7 +154,7 @@ GLFWbool _glfwIsValidContextConfig(const _GLFWctxconfig* ctxconfig)
             return GLFW_FALSE;
         }
     }
-    else if (ctxconfig->api == GLFW_OPENGL_ES_API)
+    else if (ctxconfig->client == GLFW_OPENGL_ES_API)
     {
         if (ctxconfig->major < 1 || ctxconfig->minor < 0 ||
             (ctxconfig->major == 1 && ctxconfig->minor > 1) ||
@@ -361,7 +369,7 @@ GLFWbool _glfwRefreshContextAttribs(const _GLFWctxconfig* ctxconfig)
     window->context.GetString = (PFNGLGETSTRINGPROC)
         glfwGetProcAddress("glGetString");
 
-    if (!parseVersionString(&window->context.api,
+    if (!parseVersionString(&window->context.client,
                             &window->context.major,
                             &window->context.minor,
                             &window->context.revision))
@@ -385,7 +393,7 @@ GLFWbool _glfwRefreshContextAttribs(const _GLFWctxconfig* ctxconfig)
         }
     }
 
-    if (window->context.api == GLFW_OPENGL_API)
+    if (window->context.client == GLFW_OPENGL_API)
     {
         // Read back context flags (OpenGL 3.0 and above)
         if (window->context.major >= 3)
@@ -483,7 +491,7 @@ GLFWbool _glfwRefreshContextAttribs(const _GLFWctxconfig* ctxconfig)
     {
         PFNGLCLEARPROC glClear = (PFNGLCLEARPROC) glfwGetProcAddress("glClear");
         glClear(GL_COLOR_BUFFER_BIT);
-        _glfwPlatformSwapBuffers(window);
+        window->context.swapBuffers(window);
     }
 
     return GLFW_TRUE;
@@ -545,16 +553,25 @@ GLFWbool _glfwStringInExtensionString(const char* string, const char* extensions
 GLFWAPI void glfwMakeContextCurrent(GLFWwindow* handle)
 {
     _GLFWwindow* window = (_GLFWwindow*) handle;
+    _GLFWwindow* previous;
 
     _GLFW_REQUIRE_INIT();
 
-    if (window && window->context.api == GLFW_NO_API)
+    if (window && window->context.client == GLFW_NO_API)
     {
         _glfwInputError(GLFW_NO_WINDOW_CONTEXT, NULL);
         return;
     }
 
-    _glfwPlatformMakeContextCurrent(window);
+    previous = _glfwPlatformGetCurrentContext();
+    if (previous)
+    {
+        if (!window || window->context.context != previous->context.context)
+            previous->context.makeCurrent(NULL);
+    }
+
+    if (window)
+        window->context.makeCurrent(window);
 }
 
 GLFWAPI GLFWwindow* glfwGetCurrentContext(void)
@@ -569,26 +586,29 @@ GLFWAPI void glfwSwapBuffers(GLFWwindow* handle)
 
     _GLFW_REQUIRE_INIT();
 
-    if (window->context.api == GLFW_NO_API)
+    if (window->context.client == GLFW_NO_API)
     {
         _glfwInputError(GLFW_NO_WINDOW_CONTEXT, NULL);
         return;
     }
 
-    _glfwPlatformSwapBuffers(window);
+    window->context.swapBuffers(window);
 }
 
 GLFWAPI void glfwSwapInterval(int interval)
 {
+    _GLFWwindow* window;
+
     _GLFW_REQUIRE_INIT();
 
-    if (!_glfwPlatformGetCurrentContext())
+    window = _glfwPlatformGetCurrentContext();
+    if (!window)
     {
         _glfwInputError(GLFW_NO_CURRENT_CONTEXT, NULL);
         return;
     }
 
-    _glfwPlatformSwapInterval(interval);
+    window->context.swapInterval(interval);
 }
 
 GLFWAPI int glfwExtensionSupported(const char* extension)
@@ -652,19 +672,22 @@ GLFWAPI int glfwExtensionSupported(const char* extension)
     }
 
     // Check if extension is in the platform-specific string
-    return _glfwPlatformExtensionSupported(extension);
+    return window->context.extensionSupported(extension);
 }
 
 GLFWAPI GLFWglproc glfwGetProcAddress(const char* procname)
 {
+    _GLFWwindow* window;
+
     _GLFW_REQUIRE_INIT_OR_RETURN(NULL);
 
-    if (!_glfwPlatformGetCurrentContext())
+    window = _glfwPlatformGetCurrentContext();
+    if (!window)
     {
         _glfwInputError(GLFW_NO_CURRENT_CONTEXT, NULL);
         return NULL;
     }
 
-    return _glfwPlatformGetProcAddress(procname);
+    return window->context.getProcAddress(procname);
 }
 

@@ -889,7 +889,7 @@ int _glfwPlatformCreateWindow(_GLFWwindow* window,
     if (!createWindow(window, wndconfig))
         return GLFW_FALSE;
 
-    if (ctxconfig->api != GLFW_NO_API)
+    if (ctxconfig->client != GLFW_NO_API)
     {
         if (!_glfwCreateContextNSGL(window, ctxconfig, fbconfig))
             return GLFW_FALSE;

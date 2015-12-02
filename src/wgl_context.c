@@ -372,7 +372,7 @@ int _glfwCreateContextWGL(_GLFWwindow* window,
     {
         int index = 0, mask = 0, flags = 0;
 
-        if (ctxconfig->api == GLFW_OPENGL_API)
+        if (ctxconfig->client == GLFW_OPENGL_API)
         {
             if (ctxconfig->forward)
                 flags |= WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB;
@@ -504,7 +504,7 @@ int _glfwAnalyzeContextWGL(_GLFWwindow* window,
     _glfwPlatformMakeContextCurrent(window);
     loadExtensions();
 
-    if (ctxconfig->api == GLFW_OPENGL_API)
+    if (ctxconfig->client == GLFW_OPENGL_API)
     {
         if (ctxconfig->forward)
         {
@@ -677,7 +677,7 @@ GLFWAPI HGLRC glfwGetWGLContext(GLFWwindow* handle)
     _GLFWwindow* window = (_GLFWwindow*) handle;
     _GLFW_REQUIRE_INIT_OR_RETURN(NULL);
 
-    if (window->context.api == GLFW_NO_API)
+    if (window->context.client == GLFW_NO_API)
     {
         _glfwInputError(GLFW_NO_WINDOW_CONTEXT, NULL);
         return NULL;

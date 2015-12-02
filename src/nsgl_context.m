@@ -61,7 +61,7 @@ int _glfwCreateContext(_GLFWwindow* window,
 {
     unsigned int attributeCount = 0;
 
-    if (ctxconfig->api == GLFW_OPENGL_ES_API)
+    if (ctxconfig->client == GLFW_OPENGL_ES_API)
     {
         _glfwInputError(GLFW_API_UNAVAILABLE,
                         "NSGL: OpenGL ES is not available on OS X");
@@ -290,7 +290,7 @@ GLFWAPI id glfwGetNSGLContext(GLFWwindow* handle)
     _GLFWwindow* window = (_GLFWwindow*) handle;
     _GLFW_REQUIRE_INIT_OR_RETURN(nil);
 
-    if (window->context.api == GLFW_NO_API)
+    if (window->context.client == GLFW_NO_API)
     {
         _glfwInputError(GLFW_NO_WINDOW_CONTEXT, NULL);
         return NULL;

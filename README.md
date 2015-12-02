@@ -69,6 +69,7 @@ used by the tests and examples and are not required to build the library.
  - Added `glfwGetKeyName` for querying the layout-specific name of printable
    keys
  - Added `GLFW_NO_API` for creating window without contexts
+ - Added `GLFW_CONTEXT_API` for run-time selection of context creation API
  - Added `GLFW_CONTEXT_NO_ERROR` context hint for `GL_KHR_no_error` support
  - Added `GLFW_TRUE` and `GLFW_FALSE` as client API independent boolean values
  - Added `glfwGetGLXWindow` to query the `GLXWindow` of a window

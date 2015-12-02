@@ -144,7 +144,7 @@ GLFWAPI GLFWwindow* glfwCreateWindow(int width, int height,
 
     if (ctxconfig.share)
     {
-        if (ctxconfig.share->context.api == GLFW_NO_API)
+        if (ctxconfig.share->context.client == GLFW_NO_API)
         {
             _glfwInputError(GLFW_NO_WINDOW_CONTEXT, NULL);
             return NULL;
@@ -186,19 +186,19 @@ GLFWAPI GLFWwindow* glfwCreateWindow(int width, int height,
     if (!_glfwPlatformCreateWindow(window, &wndconfig, &ctxconfig, &fbconfig))
     {
         glfwDestroyWindow((GLFWwindow*) window);
-        _glfwPlatformMakeContextCurrent(previous);
+        glfwMakeContextCurrent((GLFWwindow*) previous);
         return NULL;
     }
 
-    if (ctxconfig.api != GLFW_NO_API)
+    if (ctxconfig.client != GLFW_NO_API)
     {
-        _glfwPlatformMakeContextCurrent(window);
+        glfwMakeContextCurrent((GLFWwindow*) window);
 
         // Retrieve the actual (as opposed to requested) context attributes
         if (!_glfwRefreshContextAttribs(&ctxconfig))
         {
             glfwDestroyWindow((GLFWwindow*) window);
-            _glfwPlatformMakeContextCurrent(previous);
+            glfwMakeContextCurrent((GLFWwindow*) previous);
             return NULL;
         }
 
@@ -206,12 +206,12 @@ GLFWAPI GLFWwindow* glfwCreateWindow(int width, int height,
         if (!_glfwIsValidContext(&ctxconfig))
         {
             glfwDestroyWindow((GLFWwindow*) window);
-            _glfwPlatformMakeContextCurrent(previous);
+            glfwMakeContextCurrent((GLFWwindow*) previous);
             return NULL;
         }
 
         // Restore the previously current context (or NULL)
-        _glfwPlatformMakeContextCurrent(previous);
+        glfwMakeContextCurrent((GLFWwindow*) previous);
     }
 
     if (wndconfig.monitor)
@@ -245,9 +245,10 @@ void glfwDefaultWindowHints(void)
     memset(&_glfw.hints, 0, sizeof(_glfw.hints));
 
     // The default is OpenGL with minimum version 1.0
-    _glfw.hints.context.api   = GLFW_OPENGL_API;
-    _glfw.hints.context.major = 1;
-    _glfw.hints.context.minor = 0;
+    _glfw.hints.context.context = GLFW_CONTEXT_NATIVE_API;
+    _glfw.hints.context.client  = GLFW_OPENGL_API;
+    _glfw.hints.context.major   = 1;
+    _glfw.hints.context.minor   = 0;
 
     // The default is a focused, visible, resizable window with decorations
     _glfw.hints.window.resizable   = GLFW_TRUE;
@@ -340,7 +341,10 @@ GLFWAPI void glfwWindowHint(int target, int hint)
             _glfw.hints.window.visible = hint ? GLFW_TRUE : GLFW_FALSE;
             break;
         case GLFW_CLIENT_API:
-            _glfw.hints.context.api = hint;
+            _glfw.hints.context.client = hint;
+            break;
+        case GLFW_CONTEXT_API:
+            _glfw.hints.context.context = hint;
             break;
         case GLFW_CONTEXT_VERSION_MAJOR:
             _glfw.hints.context.major = hint;
@@ -391,7 +395,7 @@ GLFWAPI void glfwDestroyWindow(GLFWwindow* handle)
     // The window's context must not be current on another thread when the
     // window is destroyed
     if (window == _glfwPlatformGetCurrentContext())
-        _glfwPlatformMakeContextCurrent(NULL);
+        glfwMakeContextCurrent(NULL);
 
     // Clear the focused window pointer if this is the focused window
     if (_glfw.cursorWindow == window)
@@ -615,7 +619,7 @@ GLFWAPI int glfwGetWindowAttrib(GLFWwindow* handle, int attrib)
         case GLFW_FLOATING:
             return window->floating;
         case GLFW_CLIENT_API:
-            return window->context.api;
+            return window->context.client;
         case GLFW_CONTEXT_VERSION_MAJOR:
             return window->context.major;
         case GLFW_CONTEXT_VERSION_MINOR:

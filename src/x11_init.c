@@ -774,7 +774,7 @@ int _glfwPlatformInit(void)
 #if defined(_GLFW_GLX)
     if (!_glfwInitGLX())
         return GLFW_FALSE;
-#elif defined(_GLFW_EGL)
+#else
     if (!_glfwInitEGL())
         return GLFW_FALSE;
 #endif
@@ -828,7 +828,8 @@ const char* _glfwPlatformGetVersionString(void)
     return _GLFW_VERSION_NUMBER " X11"
 #if defined(_GLFW_GLX)
         " GLX"
-#elif defined(_GLFW_EGL)
+#endif
+#if defined(_GLFW_EGL)
         " EGL"
 #endif
 #if defined(_POSIX_TIMERS) && defined(_POSIX_MONOTONIC_CLOCK)

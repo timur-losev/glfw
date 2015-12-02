@@ -140,6 +140,7 @@ The following hints are always hard constraints:
 - `GLFW_STEREO`
 - `GLFW_DOUBLEBUFFER`
 - `GLFW_CLIENT_API`
+- `GLFW_CONTEXT_API`
 
 The following additional hints are hard constraints when requesting an OpenGL
 context, but are ignored when requesting an OpenGL ES context:
@@ -221,6 +222,14 @@ This hint is ignored for windowed mode windows.
 
 
 @subsubsection window_hints_ctx Context related hints
+
+`GLFW_CONTEXT_API` specifies which context creation API to use when creating the
+context.  Possible values are `GLFW_CONTEXT_NATIVE_API`, `GLFW_CONTEXT_EGL_API`
+and `GLFW_CONTEXT_ANY_API`.  This is a hard constraint.
+
+@par
+__Wayland__, __Mir__: As EGL _is_ the native context creation API on these
+platforms, this hint has no effect there.
 
 `GLFW_CLIENT_API` specifies which client API to create the context for.
 Possible values are `GLFW_OPENGL_API`, `GLFW_OPENGL_ES_API` and `GLFW_NO_API`.

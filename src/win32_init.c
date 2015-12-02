@@ -416,7 +416,8 @@ const char* _glfwPlatformGetVersionString(void)
     return _GLFW_VERSION_NUMBER " Win32"
 #if defined(_GLFW_WGL)
         " WGL"
-#elif defined(_GLFW_EGL)
+#endif
+#if defined(_GLFW_EGL)
         " EGL"
 #endif
 #if defined(__MINGW32__)

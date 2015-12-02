@@ -176,7 +176,6 @@ void _glfwTerminateGLX(void);
 int _glfwCreateContextGLX(_GLFWwindow* window,
                           const _GLFWctxconfig* ctxconfig,
                           const _GLFWfbconfig* fbconfig);
-void _glfwDestroyContextGLX(_GLFWwindow* window);
 GLFWbool _glfwChooseVisualGLX(const _GLFWctxconfig* ctxconfig,
                               const _GLFWfbconfig* fbconfig,
                               Visual** visual, int* depth);

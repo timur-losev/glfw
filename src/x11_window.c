@@ -1473,20 +1473,20 @@ int _glfwPlatformCreateWindow(_GLFWwindow* window,
 #if defined(_GLFW_GLX)
     if (!_glfwChooseVisualGLX(ctxconfig, fbconfig, &visual, &depth))
         return GLFW_FALSE;
-#elif defined(_GLFW_EGL)
-    if (!_glfwChooseVisualEGL(ctxconfig, fbconfig, &visual, &depth))
-        return GLFW_FALSE;
+#else
+        if (!_glfwChooseVisualEGL(ctxconfig, fbconfig, &visual, &depth))
+            return GLFW_FALSE;
 #endif
 
     if (!createWindow(window, wndconfig, visual, depth))
         return GLFW_FALSE;
 
-    if (ctxconfig->api != GLFW_NO_API)
+    if (ctxconfig->client != GLFW_NO_API)
     {
 #if defined(_GLFW_GLX)
         if (!_glfwCreateContextGLX(window, ctxconfig, fbconfig))
             return GLFW_FALSE;
-#elif defined(_GLFW_EGL)
+#else
         if (!_glfwCreateContextEGL(window, ctxconfig, fbconfig))
             return GLFW_FALSE;
 #endif
@@ -1512,14 +1512,8 @@ void _glfwPlatformDestroyWindow(_GLFWwindow* window)
         window->x11.ic = NULL;
     }
 
-    if (window->context.api != GLFW_NO_API)
-    {
-#if defined(_GLFW_GLX)
-        _glfwDestroyContextGLX(window);
-#elif defined(_GLFW_EGL)
-        _glfwDestroyContextEGL(window);
-#endif
-    }
+    if (window->context.client != GLFW_NO_API)
+        window->context.destroyContext(window);
 
     if (window->x11.handle)
     {

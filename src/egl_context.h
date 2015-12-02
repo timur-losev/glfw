@@ -212,7 +212,6 @@ void _glfwTerminateEGL(void);
 int _glfwCreateContextEGL(_GLFWwindow* window,
                           const _GLFWctxconfig* ctxconfig,
                           const _GLFWfbconfig* fbconfig);
-void _glfwDestroyContextEGL(_GLFWwindow* window);
 #if defined(_GLFW_X11)
 GLFWbool _glfwChooseVisualEGL(const _GLFWctxconfig* ctxconfig,
                               const _GLFWfbconfig* fbconfig,

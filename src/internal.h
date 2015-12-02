@@ -87,6 +87,13 @@ typedef struct _GLFWcursor      _GLFWcursor;
 
 typedef int GLFWbool;
 
+typedef void (* _GLFWmakecurrentfun)(_GLFWwindow*);
+typedef void (* _GLFWswapintervalfun)(int);
+typedef GLFWglproc (* _GLFWgetprocaddressfun)(const char*);
+typedef void (* _GLFWswapbuffersfun)(_GLFWwindow*);
+typedef int (* _GLFWextensionsupportedfun)(const char*);
+typedef void (* _GLFWdestroycontext)(_GLFWwindow*);
+
 #if defined(_GLFW_COCOA)
  #include "cocoa_platform.h"
 #elif defined(_GLFW_WIN32)
@@ -197,7 +204,8 @@ struct _GLFWwndconfig
  */
 struct _GLFWctxconfig
 {
-    int           api;
+    int           context;
+    int           client;
     int           major;
     int           minor;
     GLFWbool      forward;
@@ -245,12 +253,19 @@ struct _GLFWfbconfig
  */
 struct _GLFWcontext
 {
-    int                 api;
+    int                 context, client;
     int                 major, minor, revision;
     GLFWbool            forward, debug, noerror;
     int                 profile;
     int                 robustness;
     int                 release;
+
+    _GLFWmakecurrentfun         makeCurrent;
+    _GLFWswapintervalfun        swapInterval;
+    _GLFWgetprocaddressfun      getProcAddress;
+    _GLFWswapbuffersfun         swapBuffers;
+    _GLFWextensionsupportedfun  extensionSupported;
+    _GLFWdestroycontext         destroyContext;
 
     PFNGLGETSTRINGIPROC GetStringi;
     PFNGLGETINTEGERVPROC GetIntegerv;
@@ -632,11 +647,6 @@ void _glfwPlatformWaitEvents(void);
  */
 void _glfwPlatformPostEmptyEvent(void);
 
-/*! @copydoc glfwMakeContextCurrent
- *  @ingroup platform
- */
-void _glfwPlatformMakeContextCurrent(_GLFWwindow* window);
-
 /*! @ingroup platform
  */
 void _glfwPlatformSetCurrentContext(_GLFWwindow* context);
@@ -645,26 +655,6 @@ void _glfwPlatformSetCurrentContext(_GLFWwindow* context);
  *  @ingroup platform
  */
 _GLFWwindow* _glfwPlatformGetCurrentContext(void);
-
-/*! @copydoc glfwSwapBuffers
- *  @ingroup platform
- */
-void _glfwPlatformSwapBuffers(_GLFWwindow* window);
-
-/*! @copydoc glfwSwapInterval
- *  @ingroup platform
- */
-void _glfwPlatformSwapInterval(int interval);
-
-/*! @copydoc glfwExtensionSupported
- *  @ingroup platform
- */
-int _glfwPlatformExtensionSupported(const char* extension);
-
-/*! @copydoc glfwGetProcAddress
- *  @ingroup platform
- */
-GLFWglproc _glfwPlatformGetProcAddress(const char* procname);
 
 /*! @copydoc glfwCreateCursor
  *  @ingroup platform
