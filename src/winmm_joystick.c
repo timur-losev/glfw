@@ -52,13 +52,13 @@ static float normalizeAxis(DWORD pos, DWORD min, DWORD max)
 
 // Initialize joystick interface
 //
-void _glfwInitJoysticks(void)
+void _glfwInitJoysticksWin32(void)
 {
 }
 
 // Close all opened joystick handles
 //
-void _glfwTerminateJoysticks(void)
+void _glfwTerminateJoysticksWin32(void)
 {
     int i;
 

@@ -187,7 +187,7 @@ static void pollJoystickEvents(void)
 
 // Initialize joystick interface
 //
-int _glfwInitJoysticks(void)
+int _glfwInitJoysticksLinux(void)
 {
 #if defined(__linux__)
     const char* dirname = "/dev/input";
@@ -258,7 +258,7 @@ int _glfwInitJoysticks(void)
 
 // Close all opened joystick handles
 //
-void _glfwTerminateJoysticks(void)
+void _glfwTerminateJoysticksLinux(void)
 {
 #if defined(__linux__)
     int i;

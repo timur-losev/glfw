@@ -72,7 +72,7 @@ static GLFWbool enterFullscreenMode(_GLFWwindow* window)
     GLFWbool status;
     int xpos, ypos;
 
-    status = _glfwSetVideoMode(window->monitor, &window->videoMode);
+    status = _glfwSetVideoModeNS(window->monitor, &window->videoMode);
 
     _glfwPlatformGetVideoMode(window->monitor, &mode);
     _glfwPlatformGetMonitorPos(window->monitor, &xpos, &ypos);
@@ -87,7 +87,7 @@ static GLFWbool enterFullscreenMode(_GLFWwindow* window)
 //
 static void leaveFullscreenMode(_GLFWwindow* window)
 {
-    _glfwRestoreVideoMode(window->monitor);
+    _glfwRestoreVideoModeNS(window->monitor);
 }
 
 // Transforms the specified y-coordinate between the CG display and NS screen
@@ -267,7 +267,7 @@ static int translateKey(unsigned int key)
     int i;
 
     for (i = 0;  i < _glfw.monitorCount;  i++)
-        _glfwRestoreVideoMode(_glfw.monitors[i]);
+        _glfwRestoreVideoModeNS(_glfw.monitors[i]);
 }
 
 @end
@@ -891,7 +891,7 @@ int _glfwPlatformCreateWindow(_GLFWwindow* window,
 
     if (ctxconfig->api != GLFW_NO_API)
     {
-        if (!_glfwCreateContext(window, ctxconfig, fbconfig))
+        if (!_glfwCreateContextNSGL(window, ctxconfig, fbconfig))
             return GLFW_FALSE;
     }
 
@@ -913,7 +913,7 @@ void _glfwPlatformDestroyWindow(_GLFWwindow* window)
         leaveFullscreenMode(window);
 
     if (window->context.api != GLFW_NO_API)
-        _glfwDestroyContext(window);
+        _glfwDestroyContextNSGL(window);
 
     [window->ns.object setDelegate:nil];
     [window->ns.delegate release];

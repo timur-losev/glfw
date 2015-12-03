@@ -341,6 +341,9 @@ char* _glfwCreateUTF8FromWideString(const WCHAR* source)
 
 int _glfwPlatformInit(void)
 {
+    if (!_glfwInitThreadLocalStorageWin32())
+        return GLFW_FALSE;
+
     // To make SetForegroundWindow work as we want, we need to fiddle
     // with the FOREGROUNDLOCKTIMEOUT system setting (we do this as early
     // as possible in the hope of still being the foreground process)
@@ -359,7 +362,7 @@ int _glfwPlatformInit(void)
     else if (_glfw_SetProcessDPIAware)
         _glfw_SetProcessDPIAware();
 
-    if (!_glfwRegisterWindowClass())
+    if (!_glfwRegisterWindowClassWin32())
         return GLFW_FALSE;
 
     _glfw.win32.helperWindow = createHelperWindow();
@@ -368,18 +371,23 @@ int _glfwPlatformInit(void)
 
     _glfwPlatformPollEvents();
 
-    if (!_glfwInitContextAPI())
+#if defined(_GLFW_WGL)
+    if (!_glfwInitWGL())
         return GLFW_FALSE;
+#elif defined(_GLFW_EGL)
+    if (!_glfwInitEGL())
+        return GLFW_FALSE;
+#endif
 
-    _glfwInitTimer();
-    _glfwInitJoysticks();
+    _glfwInitTimerWin32();
+    _glfwInitJoysticksWin32();
 
     return GLFW_TRUE;
 }
 
 void _glfwPlatformTerminate(void)
 {
-    _glfwUnregisterWindowClass();
+    _glfwUnregisterWindowClassWin32();
 
     // Restore previous foreground lock timeout system setting
     SystemParametersInfoW(SPI_SETFOREGROUNDLOCKTIMEOUT, 0,
@@ -388,8 +396,14 @@ void _glfwPlatformTerminate(void)
 
     free(_glfw.win32.clipboardString);
 
-    _glfwTerminateJoysticks();
-    _glfwTerminateContextAPI();
+#if defined(_GLFW_WGL)
+    _glfwTerminateWGL();
+#elif defined(_GLFW_EGL)
+    _glfwTerminateEGL();
+#endif
+
+    _glfwTerminateJoysticksWin32();
+    _glfwTerminateThreadLocalStorageWin32();
 
     if (_glfw.win32.helperWindow)
         DestroyWindow(_glfw.win32.helperWindow);
