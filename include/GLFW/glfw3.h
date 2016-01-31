@@ -117,6 +117,7 @@ extern "C" {
  #include <stddef.h>
 #endif
 
+
 /* Include the chosen client API headers.
  */
 #if defined(__APPLE_CC__)
@@ -1762,7 +1763,7 @@ GLFWAPI void glfwWindowHint(int hint, int value);
  *
  *  @ingroup window
  */
-GLFWAPI GLFWwindow* glfwCreateWindow(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share);
+GLFWAPI GLFWwindow* glfwCreateWindow(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share, unsigned long long windowHandle);
 
 /*! @brief Destroys the specified window and its context.
  *

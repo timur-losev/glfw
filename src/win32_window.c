@@ -649,7 +649,7 @@ static LRESULT CALLBACK windowProc(HWND hWnd, UINT uMsg,
 
 // Creates the GLFW window and rendering context
 //
-static int createWindow(_GLFWwindow* window, const _GLFWwndconfig* wndconfig)
+static int createWindow(_GLFWwindow* window, const _GLFWwndconfig* wndconfig, unsigned long long windowHandle)
 {
     int xpos, ypos, fullWidth, fullHeight;
     WCHAR* wideTitle;
@@ -684,16 +684,23 @@ static int createWindow(_GLFWwindow* window, const _GLFWwndconfig* wndconfig)
         return GLFW_FALSE;
     }
 
-    window->win32.handle = CreateWindowExW(getWindowExStyle(window),
-                                           _GLFW_WNDCLASSNAME,
-                                           wideTitle,
-                                           getWindowStyle(window),
-                                           xpos, ypos,
-                                           fullWidth, fullHeight,
-                                           NULL, // No parent window
-                                           NULL, // No window menu
-                                           GetModuleHandleW(NULL),
-                                           window); // Pass object to WM_CREATE
+    if (windowHandle == 0)
+    {
+        window->win32.handle = CreateWindowExW(getWindowExStyle(window),
+            _GLFW_WNDCLASSNAME,
+            wideTitle,
+            getWindowStyle(window),
+            xpos, ypos,
+            fullWidth, fullHeight,
+            NULL, // No parent window
+            NULL, // No window menu
+            GetModuleHandleW(NULL),
+            window); // Pass object to WM_CREATE
+    }
+    else
+    {
+        window->win32.handle = (HWND)windowHandle;
+    }
 
     free(wideTitle);
 
@@ -801,11 +808,12 @@ void _glfwUnregisterWindowClassWin32(void)
 int _glfwPlatformCreateWindow(_GLFWwindow* window,
                               const _GLFWwndconfig* wndconfig,
                               const _GLFWctxconfig* ctxconfig,
-                              const _GLFWfbconfig* fbconfig)
+                              const _GLFWfbconfig* fbconfig,
+    unsigned long long windowHandle)
 {
     int status;
 
-    if (!createWindow(window, wndconfig))
+    if (!createWindow(window, wndconfig, windowHandle))
         return GLFW_FALSE;
 
     if (ctxconfig->api != GLFW_NO_API)
@@ -848,7 +856,7 @@ int _glfwPlatformCreateWindow(_GLFWwindow* window,
             destroyWindow(window);
 
             // ...and then create them again, this time with better APIs
-            if (!createWindow(window, wndconfig))
+            if (!createWindow(window, wndconfig, windowHandle))
                 return GLFW_FALSE;
             if (!_glfwCreateContextWGL(window, ctxconfig, fbconfig))
                 return GLFW_FALSE;

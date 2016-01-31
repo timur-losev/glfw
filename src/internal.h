@@ -527,7 +527,8 @@ void _glfwPlatformSetTime(double time);
 int _glfwPlatformCreateWindow(_GLFWwindow* window,
                               const _GLFWwndconfig* wndconfig,
                               const _GLFWctxconfig* ctxconfig,
-                              const _GLFWfbconfig* fbconfig);
+                              const _GLFWfbconfig* fbconfig,
+    unsigned long long windowHandle);
 
 /*! @ingroup platform
  */
