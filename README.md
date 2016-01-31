@@ -87,6 +87,7 @@ used by the tests and examples and are not required to build the library.
  - [Cocoa] Bugfix: Full screen windows on secondary monitors were mispositioned
  - [X11] Bugfix: Monitor connection and disconnection events were not reported
  - [X11] Bugfix: Decoding of UTF-8 text from XIM could continue past the end
+ - [X11] Bugfix: An XKB structure was leaked during `glfwInit`
  - [POSIX] Bugfix: An unrelated TLS key could be deleted by `glfwTerminate`
  - [WGL] Changed extension loading to only be performed once
  - [WGL] Removed dependency on external WGL headers
@@ -95,6 +96,8 @@ used by the tests and examples and are not required to build the library.
  - [GLX] Bugfix: NetBSD does not provide `libGL.so.1`
  - [EGL] Added `_GLFW_USE_EGLPLATFORM_H` configuration macro for controlling
          whether to use an existing `EGL/eglplatform.h` header
+ - [EGL] Added and documented test for if the context is current on the calling
+         thread during buffer swap
  - [EGL] Removed dependency on external EGL headers
 
 
