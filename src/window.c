@@ -230,13 +230,13 @@ GLFWAPI GLFWwindow* glfwCreateWindow(int width, int height,
     }
     else
     {
-        if (wndconfig.visible)
-        {
-            if (wndconfig.focused)
-                _glfwPlatformShowWindow(window);
-            else
-                _glfwPlatformUnhideWindow(window);
-        }
+//         if (wndconfig.visible)
+//         {
+//             if (wndconfig.focused)
+//                 _glfwPlatformShowWindow(window);
+//             else
+//                 _glfwPlatformUnhideWindow(window);
+//         }
     }
 
     return (GLFWwindow*) window;

@@ -728,7 +728,7 @@ static int createWindow(_GLFWwindow* window, const _GLFWwndconfig* wndconfig, un
                      SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
     }
 
-    DragAcceptFiles(window->win32.handle, TRUE);
+    //DragAcceptFiles(window->win32.handle, TRUE);
 
     window->win32.minwidth  = GLFW_DONT_CARE;
     window->win32.minheight = GLFW_DONT_CARE;
